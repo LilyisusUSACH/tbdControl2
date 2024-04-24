@@ -3,15 +3,17 @@ package tbd.group3.control2.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Data;
 
 import java.util.Date;
 
 @Data
 public class TareaEntity {
-    private Long id;
-    private String title;
-    private String description;
-    private Date expires;
-    private boolean completed;
+    private Long id_tarea;
+    private String titulo;
+    private String descripcion;
+    private Date expira;
+    private Boolean completado;
+
 }
+
