@@ -89,7 +89,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public AuthResponse createUser(AuthRegisterDTO authRegisterDTO){
         String username = authRegisterDTO.username();
         String password = authRegisterDTO.password();
-        List<String> roleRequest = authRegisterDTO.authCreateRoleDTO().roleListName();
+        List<String> roleRequest = authRegisterDTO.roleRequest().roleListName();
         Set<RolEntity> rolEntities = new HashSet<>(roleRepository.findRolEntitiesByRoleEnumIn(roleRequest));
         if(rolEntities.isEmpty()){
             throw new IllegalArgumentException("The roles specified does not exist.");
@@ -114,7 +114,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
 
         SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(usuarioCreado.getUsername(), usuarioCreado.getPassword());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(usuarioCreado.getUsername(), null, authorityList);
 
         String accessToken = jwtUtils.CreateToken(authentication);
 

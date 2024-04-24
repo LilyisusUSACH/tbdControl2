@@ -8,6 +8,6 @@ import org.springframework.validation.annotation.Validated;
 public record AuthRegisterDTO(
         @NotBlank String username,
         @NotBlank String password,
-        @Valid AuthCreateRoleDTO authCreateRoleDTO
+        @Valid AuthCreateRoleDTO roleRequest
 ){
 }
