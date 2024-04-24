@@ -9,10 +9,8 @@ import java.util.List;
 
 @Service
 public class UsuarioService {
-    @Autowired
-    UsuarioRepository usuarioRepository;
 
     public List<UsuarioEntity> getUsuarios(){
-        return usuarioRepository.findAll();
+        return null;
     }
 }
