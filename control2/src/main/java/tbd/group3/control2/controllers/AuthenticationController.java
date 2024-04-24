@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tbd.group3.control2.controllers.DTO.AuthLoginDTO;
+import tbd.group3.control2.controllers.DTO.AuthRegisterDTO;
 import tbd.group3.control2.controllers.DTO.AuthResponse;
 import tbd.group3.control2.services.UserDetailServiceImpl;
 
@@ -22,6 +23,11 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthLoginDTO authLoginDTO){
         return new ResponseEntity<AuthResponse>(userDetailService.loginUser(authLoginDTO), HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid AuthRegisterDTO registerUser){
+        return new ResponseEntity<>(this.userDetailService.createUser(registerUser), HttpStatus.CREATED);
     }
 
 }
