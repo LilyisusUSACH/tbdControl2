@@ -14,7 +14,7 @@ import java.util.Set;
 public class RolEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_rol;
     private RolType nombre; // Cambiamos el tipo de String a RolType
     // Enum que define los tipos de roles
     public enum RolType {

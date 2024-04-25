@@ -84,12 +84,25 @@ public class TareaRepositoryImpl implements TareaRepository {
         return null;
     }
 
-    /*
+
     @Override
     public Boolean delete(Long id, String actualUser) {
         String sqlDeleteQuery = "DELETE FROM tarea WHERE id_tarea = :id";
         return deleteSql(id, actualUser, sqlDeleteQuery, sql2o, usuarioRepository);
     }
-*/
+
+
+    static Boolean deleteSql(Long id, String actualUser, String sqlDeleteQuery, Sql2o sql2o, UsuarioRepository usuarioRepository) {
+        try (Connection con = sql2o.open()) {
+            usuarioRepository.setUsername(actualUser, con);
+            con.createQuery(sqlDeleteQuery)
+                    .addParameter("id", id)
+                    .executeUpdate();
+            return true;
+        }catch (Exception e) {
+            System.out.println("Error: " + e);
+            return false;
+        }
+    }
 
 }

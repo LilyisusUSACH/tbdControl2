@@ -11,6 +11,7 @@ public interface TareaRepository {
     TareaEntity create(TareaEntity tarea, String actualUser);
     TareaEntity findById(Long id);
     TareaEntity update(TareaEntity tarea, String actualUser);
-    //Boolean delete(Long id, String actualUser);
+
+    Boolean delete(Long id, String actualUser);
 
 }
