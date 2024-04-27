@@ -40,11 +40,11 @@ public class Rol_PermisosRepositoryImpl implements Rol_PermisosRepository {
     }*/
 
     @Override
-    public Rol_PermisosEntity findById(Long id_rol_permisos) {
-        String sqlQuery = "SELECT * FROM rol_permisos WHERE id_rol_permisos= :id_rol_permisos";
+    public Rol_PermisosEntity findById(Long id) {
+        String sqlQuery = "SELECT * FROM rol_permiso WHERE id = :id";
         try (Connection con = sql2o.open()) {
             return con.createQuery(sqlQuery)
-                    .addParameter("id_rol_permisos", id_rol_permisos)
+                    .addParameter("id", id)
                     .executeAndFetchFirst(Rol_PermisosEntity.class);
         } catch (Exception e) {
             System.out.println("Error: " + e);
@@ -54,7 +54,7 @@ public class Rol_PermisosRepositoryImpl implements Rol_PermisosRepository {
 
     @Override
     public Rol_PermisosEntity create(Rol_PermisosEntity rol_permisos, String actualUser) {
-        String sqlInsertQuery = "INSERT INTO rol_permisos(id_permiso, id_rol) VALUES(:id_permiso, :id_rol)";
+        String sqlInsertQuery = "INSERT INTO rol_permiso(id_permiso, id_rol) VALUES(:id_permiso, :id_rol)";
         try (Connection con = sql2o.open()){
             usuarioRepository.setUsername(actualUser, con);
             Long id = con.createQuery(sqlInsertQuery).bind(rol_permisos).executeUpdate().getKey(Long.class);
@@ -68,13 +68,13 @@ public class Rol_PermisosRepositoryImpl implements Rol_PermisosRepository {
 
     @Override
     public Rol_PermisosEntity update(Rol_PermisosEntity rol_permisos, String actualUser) {
-        String sqlUpdateQuery = "UPDATE rol_permisos SET id_permiso= :id_permiso, id_rol = :id_rol WHERE id_rol_permisos = :id_rol_permisos";
+        String sqlUpdateQuery = "UPDATE rol_permiso SET id_permiso= :id_permiso, id_rol = :id_rol WHERE id = :id";
         try (Connection con = sql2o.open()) {
             usuarioRepository.setUsername(actualUser, con);
             con.createQuery(sqlUpdateQuery)
                     .addParameter("id_permiso", rol_permisos.getId_permiso())
                     .addParameter("id_rol", rol_permisos.getId_rol())
-                    .addParameter("id_rol_permisos", rol_permisos.getId_rol_permisos())
+                    .addParameter("id", rol_permisos.getId())
                     .executeUpdate();
             return rol_permisos;
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class Rol_PermisosRepositoryImpl implements Rol_PermisosRepository {
 
     @Override
     public Boolean delete(Long id, String actualUser) {
-        String sqlDeleteQuery = "DELETE FROM rol_permisos WHERE id_rol_permisos = :id";
+        String sqlDeleteQuery = "DELETE FROM rol_permiso WHERE id = :id";
         return deleteSql(id, actualUser, sqlDeleteQuery, sql2o, usuarioRepository);
     }
 

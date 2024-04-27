@@ -1,13 +1,11 @@
 package tbd.group3.control2.entities;
 
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class PermisosEntity {
-    private Long id_permisos;
-    private Permiso nombre;
-
-    public enum Permiso {
-        READ, WRITE, UPDATE
-    }
+    private Long id;
+    private EPermisos nombre;
 }

@@ -1,6 +1,6 @@
 package tbd.group3.control2.entities;
 
-public enum RoleEnum {
+public enum ERoles {
     ADMIN,
     USER,
     INVITED,

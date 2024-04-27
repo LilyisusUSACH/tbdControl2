@@ -39,11 +39,11 @@ public class Rol_UsuarioRepositoryImpl implements Rol_UsuarioRepository{
     }*/
 
     @Override
-    public Rol_UsuarioEntity findById(Long id_rol_usuario) {
-        String sqlQuery = "SELECT * FROM rol_usuario WHERE id_rol_usuario= :id_rol_usuario";
+    public Rol_UsuarioEntity findById(Long id) {
+        String sqlQuery = "SELECT * FROM rol_usuario WHERE id= :id";
         try (Connection con = sql2o.open()) {
             return con.createQuery(sqlQuery)
-                    .addParameter("id_rol_usuario", id_rol_usuario)
+                    .addParameter("id_rol_usuario", id)
                     .executeAndFetchFirst(Rol_UsuarioEntity.class);
         } catch (Exception e) {
             System.out.println("Error: " + e);
@@ -67,13 +67,13 @@ public class Rol_UsuarioRepositoryImpl implements Rol_UsuarioRepository{
 
     @Override
     public Rol_UsuarioEntity update(Rol_UsuarioEntity rol_usuario, String actualUser) {
-        String sqlUpdateQuery = "UPDATE rol_usuario SET id_usuario= :id_usuario, id_rol = :id_rol WHERE id_rol_usuario = :id_rol_usuario";
+        String sqlUpdateQuery = "UPDATE rol_usuario SET id_usuario= :id_usuario, id_rol = :id_rol WHERE id = :id";
         try (Connection con = sql2o.open()) {
             usuarioRepository.setUsername(actualUser, con);
             con.createQuery(sqlUpdateQuery)
                     .addParameter("id_usuario", rol_usuario.getId_usuario())
                     .addParameter("id_rol", rol_usuario.getId_rol())
-                    .addParameter("id_rol_usuario", rol_usuario.getId_rol_usuario())
+                    .addParameter("id_rol_usuario", rol_usuario.getId())
                     .executeUpdate();
             return rol_usuario;
         } catch (Exception e) {

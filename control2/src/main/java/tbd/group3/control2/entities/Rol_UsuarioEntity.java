@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Rol_UsuarioEntity {
-    private Long id_rol_usuario;
+    private Long id;
     private Long id_usuario;
     private Long id_rol;
 }

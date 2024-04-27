@@ -9,11 +9,10 @@ import java.util.Date;
 
 @Data
 public class TareaEntity {
-    private Long id_tarea;
+    private Long id;
     private String titulo;
     private String descripcion;
     private Date expira;
     private Boolean completado;
-
 }
 

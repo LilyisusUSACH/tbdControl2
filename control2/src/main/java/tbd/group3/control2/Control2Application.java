@@ -1,17 +1,16 @@
 package tbd.group3.control2;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import tbd.group3.control2.entities.PermissionEntity;
-import tbd.group3.control2.entities.RolEntity;
-import tbd.group3.control2.entities.RoleEnum;
-import tbd.group3.control2.entities.UsuarioEntity;
+import tbd.group3.control2.entities.*;
+import tbd.group3.control2.repositories.PermisosRepository;
+import tbd.group3.control2.repositories.RolRepository;
 import tbd.group3.control2.repositories.UsuarioRepository;
 
-import java.util.List;
 import java.util.Set;
 
 @SpringBootApplication
@@ -20,50 +19,63 @@ public class Control2Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Control2Application.class, args);
 	}
+
 	@Bean
-	CommandLineRunner init(UsuarioRepository userRepository) {
-		return args -> {
+	CommandLineRunner init(UsuarioRepository usuarioRepository, PermisosRepository permisosRepository, RolRepository rolRepository) {
+        return args -> {
 			/* Create PERMISSIONS */
-			PermissionEntity createPermission = PermissionEntity.builder()
-					.name("CREATE")
-					.build();
+			PermisosEntity permisoCrear = permisosRepository.create(  PermisosEntity.builder()
+					.nombre(EPermisos.CREATE)
+					.build(), null);
 
-			PermissionEntity readPermission = PermissionEntity.builder()
-					.name("READ")
-					.build();
+			PermisosEntity permisoLeer = permisosRepository.create(  PermisosEntity.builder()
+					.nombre(EPermisos.READ)
+					.build(),null);
 
-			PermissionEntity updatePermission = PermissionEntity.builder()
-					.name("UPDATE")
-					.build();
+			PermisosEntity permisoUpdate = permisosRepository.create(  PermisosEntity.builder()
+					.nombre(EPermisos.UPDATE)
+					.build(),null);
 
-			PermissionEntity deletePermission = PermissionEntity.builder()
-					.name("DELETE")
-					.build();
+			PermisosEntity permisoBorrar = permisosRepository.create(  PermisosEntity.builder()
+					.nombre(EPermisos.DELETE)
+					.build(),null);
 
-			PermissionEntity refactorPermission = PermissionEntity.builder()
-					.name("REFACTOR")
-					.build();
+			PermisosEntity permisoRefactor = permisosRepository.create(  PermisosEntity.builder()
+					.nombre(EPermisos.REFACTOR)
+					.build(),null);
 
 			/* Create ROLES */
-			RolEntity roleAdmin = RolEntity.builder()
-					.roleEnum(RoleEnum.ADMIN)
-					.permissionList(Set.of(createPermission, readPermission, updatePermission, deletePermission))
-					.build();
+			Long id_roleAdmin = rolRepository.create(RolEntity.builder()
+					.nombre(ERoles.ADMIN)
+					.build(), null).getId();
 
-			RolEntity roleUser = RolEntity.builder()
-					.roleEnum(RoleEnum.USER)
-					.permissionList(Set.of(createPermission, readPermission))
-					.build();
+			permisosRepository.createPermisoByRol(permisoCrear, id_roleAdmin);
+			permisosRepository.createPermisoByRol(permisoLeer, id_roleAdmin);
+			permisosRepository.createPermisoByRol(permisoUpdate, id_roleAdmin);
+			permisosRepository.createPermisoByRol(permisoBorrar, id_roleAdmin);
 
-			RolEntity roleInvited = RolEntity.builder()
-					.roleEnum(RoleEnum.INVITED)
-					.permissionList(Set.of(readPermission))
-					.build();
+			Long id_roleUser = rolRepository.create(RolEntity.builder()
+					.nombre(ERoles.USER)
+					.build(), null).getId();
 
-			RolEntity roleDeveloper = RolEntity.builder()
-					.roleEnum(RoleEnum.INVITED)
-					.permissionList(Set.of(createPermission, readPermission, updatePermission, deletePermission, refactorPermission))
-					.build();
+			permisosRepository.createPermisoByRol(permisoCrear, id_roleUser);
+			permisosRepository.createPermisoByRol(permisoLeer, id_roleUser);
+
+
+			Long id_roleInvited = rolRepository.create(RolEntity.builder()
+					.nombre(ERoles.INVITED)
+					.build(), null).getId();
+			permisosRepository.createPermisoByRol(permisoLeer, id_roleInvited);
+
+			Long id_roleDeveloper = rolRepository.create(RolEntity.builder()
+					.nombre(ERoles.DEVELOPER)
+					.build(), null).getId();
+
+			permisosRepository.createPermisoByRol(permisoCrear, id_roleDeveloper);
+			permisosRepository.createPermisoByRol(permisoLeer, id_roleDeveloper);
+			permisosRepository.createPermisoByRol(permisoUpdate, id_roleDeveloper);
+			permisosRepository.createPermisoByRol(permisoRefactor, id_roleDeveloper);
+			permisosRepository.createPermisoByRol(permisoBorrar, id_roleDeveloper);
 
 			/* CREATE USERS */
 			UsuarioEntity userSantiago = UsuarioEntity.builder()
@@ -73,8 +85,13 @@ public class Control2Application {
 					.accountNoExpired(true)
 					.accountNoLocked(true)
 					.credentialNoExpired(true)
-					.roles(Set.of(roleAdmin))
+					//.roles(Set.of(roleAdmin))
 					.build();
+			try {
+				rolRepository.createByUser(rolRepository.findById(id_roleAdmin), usuarioRepository.create(userSantiago, null).getId());
+			}catch (Exception e) {
+				System.out.println(e.getMessage());
+			};
 
 			UsuarioEntity userDaniel = UsuarioEntity.builder()
 					.username("daniel")
@@ -83,30 +100,46 @@ public class Control2Application {
 					.accountNoExpired(true)
 					.accountNoLocked(true)
 					.credentialNoExpired(true)
-					.roles(Set.of(roleUser))
+					//.roles(Set.of(roleUser))
 					.build();
 
+			try{
+			rolRepository.createByUser(rolRepository.findById(id_roleUser),usuarioRepository.create(userDaniel,null).getId());
+			}catch (Exception e) {
+				System.out.println(e.getMessage());
+			};
 			UsuarioEntity userAndrea = UsuarioEntity.builder()
 					.username("andrea")
-					.password("321")
+					.password(new BCryptPasswordEncoder().encode("321"))
 					.isEnabled(true)
 					.accountNoExpired(true)
 					.accountNoLocked(true)
 					.credentialNoExpired(true)
-					.roles(Set.of(roleInvited))
+					//.roles(Set.of(roleInvited))
 					.build();
+
+			try{
+			rolRepository.createByUser(rolRepository.findById(id_roleInvited),usuarioRepository.create(userAndrea,null).getId());
+			}catch (Exception e) {
+				System.out.println(e.getMessage());
+			};
 
 			UsuarioEntity userAnyi = UsuarioEntity.builder()
 					.username("anyi")
-					.password("aaaa")
+					.password(new BCryptPasswordEncoder().encode("aaaa"))
 					.isEnabled(true)
 					.accountNoExpired(true)
 					.accountNoLocked(true)
 					.credentialNoExpired(true)
-					.roles(Set.of(roleInvited))
+					//.roles(Set.of(roleInvited))
 					.build();
 
-			userRepository.saveAll(List.of(userSantiago, userDaniel, userAndrea, userAnyi));
+			try{
+			rolRepository.createByUser(rolRepository.findById(id_roleInvited),usuarioRepository.create(userAnyi,null).getId());
+			}catch (Exception e) {
+				System.out.println(e.getMessage());
+			};
+			// userRepository.saveAll(List.of(userSantiago, userDaniel, userAndrea, userAnyi));
 		};
 	}
 }

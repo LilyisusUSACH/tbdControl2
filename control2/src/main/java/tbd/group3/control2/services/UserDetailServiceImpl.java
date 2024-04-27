@@ -18,7 +18,8 @@ import tbd.group3.control2.controllers.DTO.AuthRegisterDTO;
 import tbd.group3.control2.controllers.DTO.AuthResponse;
 import tbd.group3.control2.entities.RolEntity;
 import tbd.group3.control2.entities.UsuarioEntity;
-import tbd.group3.control2.repositories.RoleRepository;
+import tbd.group3.control2.repositories.PermisosRepository;
+import tbd.group3.control2.repositories.RolRepository;
 import tbd.group3.control2.repositories.UsuarioRepository;
 import tbd.group3.control2.utils.JwtUtils;
 
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
@@ -40,23 +40,36 @@ public class UserDetailServiceImpl implements UserDetailsService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private RolRepository rolRepository;
+
+    @Autowired
+    private PermisosRepository permisosRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsuarioEntity usuarioEntity = usuarioRepository.findUserEntityByUsername(username)
+        UsuarioEntity usuarioEntity = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("El usuario " + username + " no existe."));
 
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 
-        usuarioEntity.getRoles()
-                .forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
+        //usuarioEntity.getRoles()
+         //       .forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
 
-        usuarioEntity.getRoles().stream()
-                .flatMap(role -> role.getPermissionList().stream())
-                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
+        List<RolEntity> rolesByUser = rolRepository.findAllByUsuario(usuarioEntity.getId());
+        rolesByUser
+                .forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getNombre().name()))));
+        rolesByUser.stream()
+                .flatMap( role -> permisosRepository.findAllByRol(role.getId()).stream())
+                .forEach( permiso ->  authorityList.add(new SimpleGrantedAuthority(permiso.getNombre().name())));
+
+        //usuarioEntity.getRoles().stream()
+        //        .flatMap(role -> role.getPermissionList().stream())
+        //        .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
+
+
+
         return new User(usuarioEntity.getUsername(), usuarioEntity.getPassword(),
-                usuarioEntity.isEnabled(), usuarioEntity.isAccountNoExpired(),
+                usuarioEntity.isEnabled()   , usuarioEntity.isAccountNoExpired(),
                 usuarioEntity.isCredentialNoExpired(), usuarioEntity.isAccountNoLocked(),
                 authorityList);
     }
@@ -90,28 +103,39 @@ public class UserDetailServiceImpl implements UserDetailsService {
         String username = authRegisterDTO.username();
         String password = authRegisterDTO.password();
         List<String> roleRequest = authRegisterDTO.roleRequest().roleListName();
-        Set<RolEntity> rolEntities = new HashSet<>(roleRepository.findRolEntitiesByRoleEnumIn(roleRequest));
+        Set<RolEntity> rolEntities = new HashSet<>(rolRepository.findRolEntitiesByRoleEnumIn(roleRequest));
         if(rolEntities.isEmpty()){
             throw new IllegalArgumentException("The roles specified does not exist.");
         }
+
         UsuarioEntity usuario = UsuarioEntity.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
-                .roles(rolEntities)
+         //       .roles(rolEntities)
                 .isEnabled(true)
                 .accountNoExpired(true)
                 .accountNoLocked(true)
                 .accountNoLocked(true)
                 .build();
-        UsuarioEntity usuarioCreado = usuarioRepository.save(usuario);
+
+        UsuarioEntity usuarioCreado = usuarioRepository.create(usuario,username);
+
+        rolEntities.forEach( rolEntity -> rolRepository.createByUser(rolEntity, usuarioCreado.getId()) );
 
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 
-        usuarioCreado.getRoles().forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
+        List<RolEntity> rolesByUser = rolRepository.findAllByUsuario(usuarioCreado.getId());
+        rolesByUser
+                .forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getNombre().name()))));
+        rolesByUser.stream()
+                .flatMap( role -> permisosRepository.findAllByRol(role.getId()).stream())
+                .forEach( permiso ->  authorityList.add(new SimpleGrantedAuthority(permiso.getNombre().name())));
 
-        usuarioCreado.getRoles().stream()
-                .flatMap(role -> role.getPermissionList().stream())
-                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
+        // usuarioCreado.getRoles().forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
+
+        //usuarioCreado.getRoles().stream()
+        //        .flatMap(role -> role.getPermissionList().stream())
+        //        .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
 
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = new UsernamePasswordAuthenticationToken(usuarioCreado.getUsername(), null, authorityList);

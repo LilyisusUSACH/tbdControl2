@@ -5,6 +5,7 @@ import org.sql2o.Connection;
 import tbd.group3.control2.entities.UsuarioEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UsuarioRepository{
 
@@ -12,7 +13,7 @@ public interface UsuarioRepository{
 
     UsuarioEntity findById(Long id);
 
-    UsuarioEntity findByUsername(String username);
+    Optional<UsuarioEntity> findByUsername(String username);
 
     Boolean Login(String username, String Password);
 
