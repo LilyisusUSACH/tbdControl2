@@ -25,4 +25,6 @@ public interface UsuarioRepository{
 
     Boolean delete(Long id, String actualUser);
 
+    Optional<UsuarioEntity> findUserEntityByUsername(String username);
+
 }

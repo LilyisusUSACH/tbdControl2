@@ -1,57 +1,98 @@
 <script setup>
+import { ref } from 'vue';
 
-const username = ref("");
-const password = ref("");
+const username = ref('');
+const password = ref('');
+const isLoading = ref(false);
+const errorMessage = ref('');
+
+// Reglas de validación
+const rules = {
+  required: value => !!value || 'Este campo es obligatorio.',
+  min: v => (v && v.length >= 8) || 'La contraseña debe tener al menos 8 caracteres.',
+};
 
 const onClick = async () => {
-    try {
-        await $fetch('http://localhost:8080/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', // Asegúrate de establecer el tipo de contenido correctamente
-                // Otros encabezados si es necesario
-                'Origin': 'http://localhost:3000',
-            },
-            body: JSON.stringify({
-                'username': username.value,
-                'password': password.value,
-                'roleRequest':{
-                    'roleListName':["ADMIN"]
-                }
-            })
-        })
-    } catch (error) {
-        console.error('Error:', error)
-    }
-}
+  if (!username.value || !password.value) {
+    errorMessage.value = 'El nombre de usuario y la contraseña son obligatorios.';
+    return;
+  }
 
+  isLoading.value = true;
+  errorMessage.value = '';
+
+  try {
+    const response = await $fetch('http://localhost:8080/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+        roleRequest: {
+          roleListName: ['ADMIN']
+        }
+      })
+    });
+
+    // Si el registro es exitoso, puedes redirigir o manejar el estado de autenticación aquí.
+    isLoading.value = false;
+    // Por ejemplo: this.$router.push('/dashboard');
+
+  } catch (error) {
+    isLoading.value = false;
+    errorMessage.value = error.message || 'Ocurrió un error al registrarse.';
+  }
+}
 </script>
-<template class="init">
+
+<template>
+  <div class="container">
     <v-card elevation="16" color="surface-variant" class="principalCard">
-        <v-container style="height: 100%;">
-            <v-row style="height: 100%; align-content: space-around;">
-                <v-col>
-                    <v-form @submit.prevent>
-                        <v-text-field label="Username" v-model="username" variant="outlined"></v-text-field>
-                        <v-text-field label="Password" v-model="password" variant="outlined"></v-text-field>
-                        <v-btn type="submit" @Click="onClick" block>aaa</v-btn>
-                    </v-form>
-                </v-col>
-            </v-row>
-        </v-container>
+      <v-container>
+        <v-row justify="center">
+          <v-col cols="12" sm="8" md="6">
+            <v-form @submit.prevent="onClick">
+              <v-text-field
+                  label="Nombre de usuario"
+                  v-model="username"
+                  :rules="[rules.required]"
+                  outlined
+                  clearable
+              ></v-text-field>
+              <v-text-field
+                  label="Contraseña"
+                  v-model="password"
+                  :type="'password'"
+                  :rules="[rules.required, rules.min]"
+                  outlined
+                  clearable
+              ></v-text-field>
+              <v-btn :disabled="isLoading" type="submit" color="primary" block>
+                {{ isLoading ? 'Registrando...' : 'Registrarse' }}
+              </v-btn>
+              <v-alert v-if="errorMessage" type="error" class="mt-3">
+                {{ errorMessage }}
+              </v-alert>
+            </v-form>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card>
+  </div>
 </template>
-<style>
-.init {
-    position: relative;
+
+<style scoped>
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .principalCard {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 50vw;
-    height: 60vh;
-    transform: translate(-50%, -50%);
+  max-width: 600px;
+  width: 100%;
 }
 </style>
