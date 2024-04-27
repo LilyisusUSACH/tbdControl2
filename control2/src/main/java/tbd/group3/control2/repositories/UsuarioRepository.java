@@ -5,6 +5,7 @@ import org.sql2o.Connection;
 import tbd.group3.control2.entities.UsuarioEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UsuarioRepository{
 
@@ -23,5 +24,7 @@ public interface UsuarioRepository{
     void setUsername(String username, Connection connection);
 
     Boolean delete(Long id, String actualUser);
+
+    Optional<UsuarioEntity> findUserEntityByUsername(String username);
 
 }

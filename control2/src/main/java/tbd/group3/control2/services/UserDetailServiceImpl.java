@@ -19,6 +19,7 @@ import tbd.group3.control2.controllers.DTO.AuthResponse;
 import tbd.group3.control2.entities.RolEntity;
 import tbd.group3.control2.entities.UsuarioEntity;
 import tbd.group3.control2.repositories.RoleRepository;
+import tbd.group3.control2.repositories.RoleRepository;
 import tbd.group3.control2.repositories.UsuarioRepository;
 import tbd.group3.control2.utils.JwtUtils;
 
@@ -44,7 +45,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsuarioEntity usuarioEntity = usuarioRepository.findUserEntityByUsername(username)
+        UsuarioEntity usuarioEntity = usuarioRepository.findUserEntityByUsername(username) //TODO: Revisar findUserEntityByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("El usuario " + username + " no existe."));
 
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
@@ -54,7 +55,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         usuarioEntity.getRoles().stream()
                 .flatMap(role -> role.getPermissionList().stream())
-                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
+                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName()))); //TODO: Implementar el permiso
         return new User(usuarioEntity.getUsername(), usuarioEntity.getPassword(),
                 usuarioEntity.isEnabled(), usuarioEntity.isAccountNoExpired(),
                 usuarioEntity.isCredentialNoExpired(), usuarioEntity.isAccountNoLocked(),
@@ -103,7 +104,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .accountNoLocked(true)
                 .accountNoLocked(true)
                 .build();
-        UsuarioEntity usuarioCreado = usuarioRepository.save(usuario);
+        UsuarioEntity usuarioCreado = usuarioRepository.create(usuario, username);
 
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 

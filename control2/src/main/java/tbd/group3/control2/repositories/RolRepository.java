@@ -11,4 +11,5 @@ public interface RolRepository {
     RolEntity findById(Long id);
     RolEntity update(RolEntity rol, String actualUser);
     Boolean delete(Long id, String actualUser);
+
 }

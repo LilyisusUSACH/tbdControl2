@@ -6,9 +6,10 @@ import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import tbd.group3.control2.entities.UsuarioEntity;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class UsuarioRepositoryImpl implements UsuarioRepository{
+public class UsuarioRepositoryImpl implements UsuarioRepository {
 
     @Autowired
     private Sql2o sql2o;
@@ -32,7 +33,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
     }
 
     @Override
-    public UsuarioEntity findByUsername(String username){
+    public UsuarioEntity findByUsername(String username) {
         String sqlQuery = "SELECT * FROM usuarios WHERE username = :username";
         try (Connection con = sql2o.open()) {
             return con.createQuery(sqlQuery)
@@ -46,11 +47,11 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
 
     @Override
     public Boolean Login(String username, String password) {
-        String sqlQuery = "SELECT exists(SELECT *  FROM usuarios WHERE username = :username and password = :password)";
+        String sqlQuery = "SELECT exists(SELECT 1  FROM usuarios WHERE username = :username and password = :password)";
         try (Connection con = sql2o.open()) {
             return con.createQuery(sqlQuery)
                     .addParameter("username", username)
-                    .addParameter("password",password)
+                    .addParameter("password", password)
                     .executeAndFetchFirst(Boolean.class);
         } catch (Exception e) {
             System.out.println("Error: " + e);
@@ -87,9 +88,9 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
 
     @Override
     public void setUsername(String username, Connection connection) {
-        if(username == null)
+        if (username == null)
             return;
-        String sqlCreateTempUser  = "CREATE TEMPORARY TABLE usuario_actual(username text); INSERT INTO usuario_actual(username) VALUES (:username)";
+        String sqlCreateTempUser = "CREATE TEMPORARY TABLE usuario_actual(username text); INSERT INTO usuario_actual(username) VALUES (:username)";
         connection.createQuery(sqlCreateTempUser)
                 .addParameter("username", username)
                 .executeUpdate();
@@ -107,4 +108,17 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
         }
     }
 
+    @Override
+    public Optional<UsuarioEntity> findUserEntityByUsername(String username) {
+        String sqlQuery = "SELECT * FROM usuarios WHERE username = :username";
+        try (Connection con = sql2o.open()) {
+            UsuarioEntity user = con.createQuery(sqlQuery)
+                    .addParameter("username", username)
+                    .executeAndFetchFirst(UsuarioEntity.class);
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            return Optional.empty();
+        }
+    }
 }
