@@ -73,7 +73,10 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
                     .executeUpdate()
                     .getKey(Long.class);
             usuario.setId(insertedId);
-            return usuario;
+            return usuario;}
+        catch (Exception e) {
+            System.out.println("Error: " + e);
+            return null;
         }
     }
 
