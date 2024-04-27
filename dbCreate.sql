@@ -27,10 +27,10 @@ CREATE TABLE "usuario" (
 	"id" BIGSERIAL PRIMARY KEY,
 	"username" varchar UNIQUE NOT NULL,
 	"password" varchar,
-	"is_enabled" boolean,
-	"account_No_expired" boolean,
-	"account_No_Locked" boolean,
-	"credential_No_Expired" boolean
+	"isEnabled" boolean,
+	"accountNoexpired" boolean,
+	"accountNoLocked" boolean,
+	"credentialNoExpired" boolean
 );
 
 
