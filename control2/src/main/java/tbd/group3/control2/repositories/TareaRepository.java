@@ -14,4 +14,6 @@ public interface TareaRepository {
 
     Boolean delete(Long id, String actualUser);
 
+List<TareaEntity> findByUser(Long id_usuario);
+
 }
