@@ -5,6 +5,7 @@ const username = ref('');
 const password = ref('');
 const isLoading = ref(false);
 const errorMessage = ref('');
+const form = ref(null);
 
 // Reglas de validación
 const rules = {
@@ -13,8 +14,7 @@ const rules = {
 };
 
 const onClick = async () => {
-  if (!username.value || !password.value) {
-    errorMessage.value = 'El nombre de usuario y la contraseña son obligatorios.';
+  if (!form.value.validate()) {
     return;
   }
 
@@ -22,7 +22,7 @@ const onClick = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await $fetch('http://localhost:8080/auth/register', {
+    const response = await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,13 +36,19 @@ const onClick = async () => {
       })
     });
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Ocurrió un error al registrarse.');
+    }
+
     // Si el registro es exitoso, puedes redirigir o manejar el estado de autenticación aquí.
     isLoading.value = false;
     // Por ejemplo: this.$router.push('/dashboard');
 
   } catch (error) {
     isLoading.value = false;
-    errorMessage.value = error.message || 'Ocurrió un error al registrarse.';
+    errorMessage.value = error.message;
   }
 }
 </script>
@@ -53,7 +59,7 @@ const onClick = async () => {
       <v-container>
         <v-row justify="center">
           <v-col cols="12" sm="8" md="6">
-            <v-form @submit.prevent="onClick">
+            <v-form ref="form" @submit.prevent="onClick">
               <v-text-field
                   label="Nombre de usuario"
                   v-model="username"
@@ -75,6 +81,7 @@ const onClick = async () => {
               <v-alert v-if="errorMessage" type="error" class="mt-3">
                 {{ errorMessage }}
               </v-alert>
+              <v-progress-circular v-if="isLoading" indeterminate></v-progress-circular>
             </v-form>
           </v-col>
         </v-row>
