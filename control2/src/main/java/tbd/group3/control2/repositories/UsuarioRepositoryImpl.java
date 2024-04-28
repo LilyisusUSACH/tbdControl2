@@ -3,7 +3,9 @@ package tbd.group3.control2.repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.sql2o.Connection;
+import org.sql2o.Query;
 import org.sql2o.Sql2o;
+import tbd.group3.control2.entities.TareaEntity;
 import tbd.group3.control2.entities.UsuarioEntity;
 
 import javax.swing.text.html.Option;
@@ -15,6 +17,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
 
     @Autowired
     private Sql2o sql2o;
+
 
     @Override
     public List<UsuarioEntity> findAll() {
@@ -113,5 +116,50 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
             return true;
         }
     }
+    /*TODO: testeo de este metodo*/
+    @Override
+    public List<TareaEntity> getMyCompletedTareas(Long id_usuario,String actualUser) {
+        final String sqlGetQuery = "SELECT * FROM tarea WHERE id_usuario =:id_usuario AND completado = TRUE";
+        try (Connection con = sql2o.open()) {
+            setUsername(actualUser, con);
+            Query query = con.createQuery(sqlGetQuery).addParameter("id_usuario");
+            return query.executeAndFetch(TareaEntity.class);
+        }catch(Exception e){
+        System.out.println("Error: " + e);
+        }
+        return null;
+    }
+
+@Override
+    public List<TareaEntity> getMyUncompletedTareas(Long id_usuario,String actualUser) {
+        final String sqlGetQuery = "SELECT * FROM tarea WHERE id_usuario =:id_usuario AND completado = false";
+        try (Connection con = sql2o.open()) {
+            setUsername(actualUser, con);
+            Query query = con.createQuery(sqlGetQuery).addParameter("id_usuario");
+            return query.executeAndFetch(TareaEntity.class);
+        }catch(Exception e){
+            System.out.println("Error: " + e);
+        }
+        return null;
+    }
+    @Override
+    public List<TareaEntity> getMyTareas(Long id_usuario,String actualUser) {
+        final String sqlGetQuery = "SELECT * FROM tarea WHERE id_usuario =:id_usuario";
+        try (Connection con = sql2o.open()) {
+            setUsername(actualUser, con);
+            Query query = con.createQuery(sqlGetQuery).addParameter("id_usuario");
+            return query.executeAndFetch(TareaEntity.class);
+        }catch(Exception e){
+            System.out.println("Error: " + e);
+        }
+        return null;
+    }
+
 
 }
+
+
+
+
+
+
