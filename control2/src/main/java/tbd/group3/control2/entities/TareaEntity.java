@@ -14,5 +14,6 @@ public class TareaEntity {
     private String descripcion;
     private Date expira;
     private Boolean completado;
+    private Long id_usuario;
 }
 

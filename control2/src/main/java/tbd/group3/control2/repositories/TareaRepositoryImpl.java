@@ -53,7 +53,7 @@ public class TareaRepositoryImpl implements TareaRepository {
 
     @Override
     public TareaEntity create(TareaEntity tarea, String actualUser) {
-        String sqlInsertQuery = "INSERT INTO tarea(titulo, descripcion, expira, completado) VALUES(:titulo, :descripcion, :expira, :completada)";
+        String sqlInsertQuery = "INSERT INTO tarea(titulo, descripcion, expira, completado, id_usuario) VALUES(:titulo, :descripcion, :expira, :completada, :id_usuario)";
         try (Connection con = sql2o.open()){
             usuarioRepository.setUsername(actualUser, con);
             Long id = con.createQuery(sqlInsertQuery).bind(tarea).executeUpdate().getKey(Long.class);
@@ -67,7 +67,7 @@ public class TareaRepositoryImpl implements TareaRepository {
 
     @Override
     public TareaEntity update(TareaEntity tarea, String actualUser) {
-        String sqlUpdateQuery = "UPDATE tarea SET titulo= :titulo, descripcion = :descripcion, expira = :expira, completado = :completada WHERE id = :id_tarea";
+        String sqlUpdateQuery = "UPDATE tarea SET titulo= :titulo, descripcion = :descripcion, expira = :expira, completado = :completada, id_usuario = :id_usuario WHERE id = :id_tarea";
         try (Connection con = sql2o.open()) {
             usuarioRepository.setUsername(actualUser, con);
             con.createQuery(sqlUpdateQuery)
@@ -75,6 +75,7 @@ public class TareaRepositoryImpl implements TareaRepository {
                     .addParameter("expira", tarea.getExpira())
                     .addParameter("completada", tarea.getCompletado())
                     .addParameter("titulo", tarea.getTitulo())
+                    .addParameter("id_usuario", tarea.getId_usuario())
                     .addParameter("id_tarea", tarea.getId())
                     .executeUpdate();
             return tarea;
@@ -83,7 +84,6 @@ public class TareaRepositoryImpl implements TareaRepository {
         }
         return null;
     }
-
 
     @Override
     public Boolean delete(Long id, String actualUser) {
@@ -104,5 +104,19 @@ public class TareaRepositoryImpl implements TareaRepository {
             return false;
         }
     }
+
+    @Override
+    public List<TareaEntity> findByUser(Long id_usuario) {
+        String sqlQuery = "SELECT * FROM tarea WHERE id_usuario = :id_usuario";
+        try (Connection con = sql2o.open()) {
+            return con.createQuery(sqlQuery)
+                    .addParameter("id_usuario", id_usuario)
+                    .executeAndFetch(TareaEntity.class);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            return null;
+        }
+    }
+
 
 }
