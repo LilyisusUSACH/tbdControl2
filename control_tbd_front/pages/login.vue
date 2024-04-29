@@ -1,28 +1,40 @@
 import { type } from '../.nuxt/types/imports';
+import { ref, useRouter } from 'vue-router';
 <script setup>
 
 const username = ref("");
 const password = ref("");
-
+const router = useRouter();
+const error = ref('');  // Declaración de la variable de error
 
 const onClick = async () => {
-    try {
-        await $fetch('http://localhost:8080/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', // Asegúrate de establecer el tipo de contenido correctamente
-                // Otros encabezados si es necesario
-                'Origin': 'http://localhost:3000',
-            },
-            body: JSON.stringify({
-                'username': username.value,
-                'password': password.value
-            })
-        })
-    } catch (error) {
-        console.error('Error:', error)
+  try {
+    const response = await $fetch('http://localhost:8080/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': 'http://localhost:3000',
+      },
+      body: JSON.stringify({
+        'username': username.value,
+        'password': password.value
+      })
+    });
+
+    // Asegúrate de acceder al token usando la clave 'jwt', que es como viene en tu respuesta de Postman
+    if (response && response.jwt) {
+      localStorage.setItem('authToken', response.jwt); // Guarda el token
+      router.push('/dashboard'); // Redirecciona al usuario al dashboard
+    } else {
+      throw new Error('No se recibió el token de acceso');
     }
-}
+  } catch (err) {
+    console.error('Error:', err);
+    error.value = err.message || 'Un error ha ocurrido durante el login.';
+  }
+};
+
+
 
 </script>
 
@@ -34,12 +46,16 @@ const onClick = async () => {
                     <v-form @submit.prevent>
                         <v-text-field label="Username" v-model="username" variant="outlined"></v-text-field>
                         <v-text-field label="Password" v-model="password" variant="outlined"></v-text-field>
-                        <v-btn type="submit" @Click="onClick" block>aaa</v-btn>
+                        <v-btn type="submit" @click="onClick" block>aaa</v-btn>
                     </v-form>
                 </v-col>
             </v-row>
         </v-container>
     </v-card>
+  <v-alert v-if="error" type="error" class="mb-4">
+    {{ error }}
+  </v-alert>
+
 </template>
 
 <style>
