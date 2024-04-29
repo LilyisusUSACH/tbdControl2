@@ -35,6 +35,4 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getAllTareasByUser(usuario_id,actualUser));
     }
 
-
-
 }

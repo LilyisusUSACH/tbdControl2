@@ -30,4 +30,6 @@ public interface UsuarioRepository{
 
     List<TareaEntity> getMyUncompletedTareas(Long id_usuario, String actualUser);
     List<TareaEntity> getMyTareas(Long id_usuario, String actualUser);
+
+
 }

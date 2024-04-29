@@ -36,4 +36,7 @@ public class TareaService {
         return tareaRepository.delete(id,actualUser);
     }
 
+    public List<TareaEntity> getCoincidenceTasks(String search, String actualUser){
+        return tareaRepository.getCoincidences(search,actualUser);
+    }
 }

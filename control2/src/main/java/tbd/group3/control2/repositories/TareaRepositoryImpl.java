@@ -3,6 +3,7 @@ package tbd.group3.control2.repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.sql2o.Connection;
+import org.sql2o.Query;
 import org.sql2o.Sql2o;
 import tbd.group3.control2.entities.TareaEntity;
 
@@ -118,5 +119,16 @@ public class TareaRepositoryImpl implements TareaRepository {
         }
     }
 
+    public List<TareaEntity> getCoincidences(String search, String actualUser){
+        final String sqlSearchQuery="SELECT * FROM tarea WHERE titulo LIKE :search OR descripcion LIKE :search";
+        try (Connection con = sql2o.open()){
+            usuarioRepository.setUsername(actualUser, con);
+            Query query= con.createQuery(sqlSearchQuery).addParameter("search", "%"+ search +"%");
+            return query.executeAndFetch(TareaEntity.class);
+        }catch(Exception e) {
+            System.out.println("Error" + e);
+        }
+        return null;
+    }
 
 }
