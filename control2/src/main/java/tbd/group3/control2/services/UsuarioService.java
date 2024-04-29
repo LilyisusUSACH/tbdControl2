@@ -14,6 +14,7 @@ import java.util.List;
 public class UsuarioService {
     @Autowired
     JwtUtils jwtUtils;
+    UsuarioRepository usuarioRepository;
 
     public List<UsuarioEntity> getUsuarios(){
         return usuarioRepository.findAll();
