@@ -16,24 +16,25 @@ CREATE TABLE "permiso"(
 	"nombre" varchar
 );
 
+CREATE TABLE "usuario" (
+                           "id" BIGSERIAL PRIMARY KEY,
+                           "username" varchar UNIQUE NOT NULL,
+                           "password" varchar,
+                           "isEnabled" boolean,
+                           "accountNoexpired" boolean,
+                           "accountNoLocked" boolean,
+                           "credentialNoExpired" boolean
+);
+
+
 CREATE TABLE "tarea" (
 	"id" BIGSERIAL PRIMARY KEY,
 	"titulo" varchar,
 	"descripcion" varchar,
 	"expira" Date,
 	"completado" boolean,
-    "id_usuario" int
+   "id_usuario" BIGINT REFERENCES "usuario" ("id")
 );
-CREATE TABLE "usuario" (
-	"id" BIGSERIAL PRIMARY KEY,
-	"username" varchar UNIQUE NOT NULL,
-	"password" varchar,
-	"isEnabled" boolean,
-	"accountNoexpired" boolean,
-	"accountNoLocked" boolean,
-	"credentialNoExpired" boolean
-);
-
 
 CREATE TABLE "rol_permiso"(
 	"id" BIGSERIAL PRIMARY KEY,
