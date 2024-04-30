@@ -21,18 +21,18 @@ public class UsuarioController {
       return ResponseEntity.ok(usuarioService.getUsuarios());
     }
     @GetMapping("/{usuario_id}/completed")
-    public ResponseEntity<?> getTareasCompletadas(@RequestParam("usuario_id") Long usuario_id, String actualUser){
-        return ResponseEntity.ok(usuarioService.getMyCompletedTareas(usuario_id,actualUser));
+    public ResponseEntity<?> getTareasCompletadas(@RequestParam("usuario_id") Long usuario_id){
+        return ResponseEntity.ok(usuarioService.getMyCompletedTareas(usuario_id));
     }
 
     @GetMapping("/{usuario_id}/uncompleted")
-    public ResponseEntity<?> getTareasNoCompletadas(@RequestParam("usuario_id") Long usuario_id, String actualUser){
-        return ResponseEntity.ok(usuarioService.getMyUncompletedTareas(usuario_id,actualUser));
+    public ResponseEntity<?> getTareasNoCompletadas(@RequestParam("usuario_id") Long usuario_id){
+        return ResponseEntity.ok(usuarioService.getMyUncompletedTareas(usuario_id));
     }
 
     @GetMapping("/{usuario_id}/all")
-    public ResponseEntity<?> getAllTareasUser(@RequestParam("usuario_id") Long usuario_id, String actualUser){
-        return ResponseEntity.ok(usuarioService.getAllTareasByUser(usuario_id,actualUser));
+    public ResponseEntity<?> getAllTareasUser(@RequestParam("usuario_id") Long usuario_id){
+        return ResponseEntity.ok(usuarioService.getAllTareasByUser(usuario_id));
     }
 
 }

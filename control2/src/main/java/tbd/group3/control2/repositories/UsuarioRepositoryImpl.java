@@ -118,10 +118,9 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
     }
     /*TODO: testeo de este metodo*/
     @Override
-    public List<TareaEntity> getMyCompletedTareas(Long id_usuario,String actualUser) {
+    public List<TareaEntity> getMyCompletedTareas(Long id_usuario) {
         final String sqlGetQuery = "SELECT * FROM tarea WHERE id_usuario =:id_usuario AND completado = TRUE";
         try (Connection con = sql2o.open()) {
-            setUsername(actualUser, con);
             Query query = con.createQuery(sqlGetQuery).addParameter("id_usuario");
             return query.executeAndFetch(TareaEntity.class);
         }catch(Exception e){
@@ -131,10 +130,9 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
     }
 
 @Override
-    public List<TareaEntity> getMyUncompletedTareas(Long id_usuario,String actualUser) {
+    public List<TareaEntity> getMyUncompletedTareas(Long id_usuario) {
         final String sqlGetQuery = "SELECT * FROM tarea WHERE id_usuario =:id_usuario AND completado = false";
         try (Connection con = sql2o.open()) {
-            setUsername(actualUser, con);
             Query query = con.createQuery(sqlGetQuery).addParameter("id_usuario");
             return query.executeAndFetch(TareaEntity.class);
         }catch(Exception e){
@@ -143,10 +141,9 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
         return null;
     }
     @Override
-    public List<TareaEntity> getMyTareas(Long id_usuario,String actualUser) {
+    public List<TareaEntity> getMyTareas(Long id_usuario) {
         final String sqlGetQuery = "SELECT * FROM tarea WHERE id_usuario =:id_usuario";
         try (Connection con = sql2o.open()) {
-            setUsername(actualUser, con);
             Query query = con.createQuery(sqlGetQuery).addParameter("id_usuario");
             return query.executeAndFetch(TareaEntity.class);
         }catch(Exception e){

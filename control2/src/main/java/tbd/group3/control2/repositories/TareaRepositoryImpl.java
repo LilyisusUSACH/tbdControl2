@@ -53,10 +53,10 @@ public class TareaRepositoryImpl implements TareaRepository {
     }
 
     @Override
-    public TareaEntity create(TareaEntity tarea, String actualUser) {
+    public TareaEntity create(TareaEntity tarea) {
         String sqlInsertQuery = "INSERT INTO tarea(titulo, descripcion, expira, completado, id_usuario) VALUES(:titulo, :descripcion, :expira, :completada, :id_usuario)";
         try (Connection con = sql2o.open()){
-            usuarioRepository.setUsername(actualUser, con);
+
             Long id = con.createQuery(sqlInsertQuery).bind(tarea).executeUpdate().getKey(Long.class);
             return findById(id);
         } catch (Exception e) {
@@ -67,10 +67,10 @@ public class TareaRepositoryImpl implements TareaRepository {
 
 
     @Override
-    public TareaEntity update(TareaEntity tarea, String actualUser) {
+    public TareaEntity update(TareaEntity tarea) {
         String sqlUpdateQuery = "UPDATE tarea SET titulo= :titulo, descripcion = :descripcion, expira = :expira, completado = :completada, id_usuario = :id_usuario WHERE id = :id_tarea";
         try (Connection con = sql2o.open()) {
-            usuarioRepository.setUsername(actualUser, con);
+
             con.createQuery(sqlUpdateQuery)
                     .addParameter("descripcion", tarea.getDescripcion())
                     .addParameter("expira", tarea.getExpira())
@@ -119,10 +119,9 @@ public class TareaRepositoryImpl implements TareaRepository {
         }
     }
 
-    public List<TareaEntity> getCoincidences(String search, String actualUser){
+    public List<TareaEntity> getCoincidences(String search){
         final String sqlSearchQuery="SELECT * FROM tarea WHERE titulo LIKE :search OR descripcion LIKE :search";
         try (Connection con = sql2o.open()){
-            usuarioRepository.setUsername(actualUser, con);
             Query query= con.createQuery(sqlSearchQuery).addParameter("search", "%"+ search +"%");
             return query.executeAndFetch(TareaEntity.class);
         }catch(Exception e) {

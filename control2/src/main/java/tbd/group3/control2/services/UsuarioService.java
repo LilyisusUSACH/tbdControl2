@@ -19,16 +19,16 @@ public class UsuarioService {
     public List<UsuarioEntity> getUsuarios(){
         return usuarioRepository.findAll();
     }
-    public List<TareaEntity> getMyCompletedTareas(Long id_usuario, String actualUser){
-       return  usuarioRepository.getMyTareas(id_usuario, actualUser);
+    public List<TareaEntity> getMyCompletedTareas(Long id_usuario){
+       return  usuarioRepository.getMyTareas(id_usuario);
     }
 
-    public List<TareaEntity> getMyUncompletedTareas(Long id_usuario, String actualUser){
-        return  usuarioRepository.getMyUncompletedTareas(id_usuario,actualUser);
+    public List<TareaEntity> getMyUncompletedTareas(Long id_usuario){
+        return  usuarioRepository.getMyUncompletedTareas(id_usuario);
     }
 
-    public List<TareaEntity> getAllTareasByUser(Long id_usuario, String actualUser){
-        return usuarioRepository.getMyTareas(id_usuario, actualUser);
+    public List<TareaEntity> getAllTareasByUser(Long id_usuario){
+        return usuarioRepository.getMyTareas(id_usuario);
     }
 
 /*
