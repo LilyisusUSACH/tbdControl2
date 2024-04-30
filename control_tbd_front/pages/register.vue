@@ -1,3 +1,5 @@
+import { type } from '../.nuxt/types/imports';
+import { ref, useRouter } from 'vue-router';
 <script setup>
 import { ref } from 'vue';
 
@@ -5,6 +7,8 @@ const username = ref('');
 const password = ref('');
 const isLoading = ref(false);
 const errorMessage = ref('');
+const form = ref(null);
+const router = useRouter();
 
 // Reglas de validación
 const rules = {
@@ -13,8 +17,7 @@ const rules = {
 };
 
 const onClick = async () => {
-  if (!username.value || !password.value) {
-    errorMessage.value = 'El nombre de usuario y la contraseña son obligatorios.';
+  if (!form.value.validate()) {
     return;
   }
 
@@ -22,7 +25,7 @@ const onClick = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await $fetch('http://localhost:8080/auth/register', {
+    const response = await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,24 +39,36 @@ const onClick = async () => {
       })
     });
 
-    // Si el registro es exitoso, puedes redirigir o manejar el estado de autenticación aquí.
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Ocurrió un error al registrarse.');
+    }
+
+    //TODO: si no funciona el register ser especifico con el error
+    //TODO: es decir que si el usuario ya existe se le notifique al usuario
     isLoading.value = false;
-    // Por ejemplo: this.$router.push('/dashboard');
+
+    // Si el registro es exitoso se redirige al usuario al login para que inicie sesión TODO
+    router.push('/login');
 
   } catch (error) {
     isLoading.value = false;
-    errorMessage.value = error.message || 'Ocurrió un error al registrarse.';
+    errorMessage.value = error.message;
   }
 }
 </script>
 
 <template>
-  <div class="container">
-    <v-card elevation="16" color="surface-variant" class="principalCard">
-      <v-container>
-        <v-row justify="center">
-          <v-col cols="12" sm="8" md="6">
-            <v-form @submit.prevent="onClick">
+  <v-container class="fill-height" fluid>
+    <v-row align="center" justify="center">
+      <v-col cols="12" sm="8" md="6">
+        <v-card class="elevation-12" color="surface-variant">
+          <v-toolbar color="primary" dark flat>
+            <v-toolbar-title>Registro de usuario</v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-form ref="form" @submit.prevent="onClick">
               <v-text-field
                   label="Nombre de usuario"
                   v-model="username"
@@ -69,30 +84,35 @@ const onClick = async () => {
                   outlined
                   clearable
               ></v-text-field>
-              <v-btn :disabled="isLoading" type="submit" color="primary" block>
-                {{ isLoading ? 'Registrando...' : 'Registrarse' }}
-              </v-btn>
               <v-alert v-if="errorMessage" type="error" class="mt-3">
                 {{ errorMessage }}
               </v-alert>
+              <v-progress-circular v-if="isLoading" indeterminate></v-progress-circular>
             </v-form>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card>
-  </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :disabled="isLoading" color="white" @click="onClick">
+              Registrarse
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
+
 <style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.fill-height {
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.principalCard {
-  max-width: 600px;
-  width: 100%;
+.elevation-12 {
+  box-shadow: 0 6px 10px rgba(0,0,0,0.9);
 }
 </style>
+

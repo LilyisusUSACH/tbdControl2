@@ -33,7 +33,7 @@ CREATE TABLE "tarea" (
 	"descripcion" varchar,
 	"expira" Date,
 	"completado" boolean,
-    "id_usuario" BIGINT REFERENCES "usuario" ("id")
+   "id_usuario" BIGINT REFERENCES "usuario" ("id")
 );
 
 CREATE TABLE "rol_permiso"(

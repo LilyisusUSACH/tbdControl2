@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/tarea")
 public class TareaController {
 
@@ -90,4 +89,11 @@ public class TareaController {
         return ResponseEntity.ok(tareaService.getTareaByID(id_usuario));
     }
 
+    @GetMapping("/{search}")
+    public ResponseEntity<?> getTaskCoincidence(
+            @RequestParam("search") String search,
+            @RequestHeader(value = "Authorization",required = false) String token){
+        String actualUser=usuarioService.getUser(token);
+        return ResponseEntity.ok(tareaService.getCoincidenceTasks(search,actualUser));
+    }
 }
