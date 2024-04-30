@@ -14,6 +14,9 @@ public class TareaService {
     @Autowired
     TareaRepository tareaRepository;
 
+    @Autowired
+    UsuarioService usuarioService;
+
     public List<TareaEntity> getAllTareas(){
         return tareaRepository.findAll();
     }
@@ -26,6 +29,7 @@ public class TareaService {
     }
 
     public TareaEntity createTarea(TareaEntity tarea, String actualUser) {
+        tarea.setId_usuario( usuarioService.getUsuario(actualUser).getId());
         return tareaRepository.create(tarea);
     }
 

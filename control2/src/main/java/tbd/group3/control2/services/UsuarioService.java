@@ -14,11 +14,18 @@ import java.util.List;
 public class UsuarioService {
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
     UsuarioRepository usuarioRepository;
 
     public List<UsuarioEntity> getUsuarios(){
         return usuarioRepository.findAll();
     }
+
+    public UsuarioEntity getUsuario(String username){
+        return usuarioRepository.findByUsername(username).get();
+    }
+
     public List<TareaEntity> getMyCompletedTareas(Long id_usuario){
        return  usuarioRepository.getMyTareas(id_usuario);
     }

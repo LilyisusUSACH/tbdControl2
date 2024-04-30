@@ -54,9 +54,8 @@ public class TareaRepositoryImpl implements TareaRepository {
 
     @Override
     public TareaEntity create(TareaEntity tarea) {
-        String sqlInsertQuery = "INSERT INTO tarea(titulo, descripcion, expira, completado, id_usuario) VALUES(:titulo, :descripcion, :expira, :completada, :id_usuario)";
+        String sqlInsertQuery = "INSERT INTO tarea(titulo, descripcion, expira, completado, id_usuario) VALUES(:titulo, :descripcion, :expira, :completado, :id_usuario)";
         try (Connection con = sql2o.open()){
-
             Long id = con.createQuery(sqlInsertQuery).bind(tarea).executeUpdate().getKey(Long.class);
             return findById(id);
         } catch (Exception e) {
