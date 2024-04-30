@@ -14,6 +14,9 @@ public class TareaService {
     @Autowired
     TareaRepository tareaRepository;
 
+    @Autowired
+    UsuarioService usuarioService;
+
     public List<TareaEntity> getAllTareas(){
         return tareaRepository.findAll();
     }
@@ -26,14 +29,18 @@ public class TareaService {
     }
 
     public TareaEntity createTarea(TareaEntity tarea, String actualUser) {
-        return tareaRepository.create(tarea,actualUser);
+        tarea.setId_usuario( usuarioService.getUsuario(actualUser).getId());
+        return tareaRepository.create(tarea);
     }
 
-    public TareaEntity updateTarea(TareaEntity tarea, String actualUser) { return tareaRepository.update(tarea,actualUser);}
+    public TareaEntity updateTarea(TareaEntity tarea, String actualUser) { return tareaRepository.update(tarea);}
 
 
     public Boolean deleteTarea(Long id,String actualUser){
         return tareaRepository.delete(id,actualUser);
     }
 
+    public List<TareaEntity> getCoincidenceTasks(String search, String actualUser){
+        return tareaRepository.getCoincidences(search);
+    }
 }

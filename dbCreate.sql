@@ -21,7 +21,8 @@ CREATE TABLE "tarea" (
 	"titulo" varchar,
 	"descripcion" varchar,
 	"expira" Date,
-	"completado" boolean
+	"completado" boolean,
+    "id_usuario" int
 );
 CREATE TABLE "usuario" (
 	"id" BIGSERIAL PRIMARY KEY,

@@ -48,7 +48,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(http->{
                     // Endpoints publicos
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
-
+                    http.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN","INVITED","USER");
+                    http.requestMatchers(HttpMethod.POST, "/api/**").hasAnyAuthority("CREATE","WRITE","UPDATE");
                     http.requestMatchers(HttpMethod.GET, "/method/secured").hasRole("ADMIN");
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
