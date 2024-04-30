@@ -21,7 +21,8 @@ CREATE TABLE "tarea" (
 	"titulo" varchar,
 	"descripcion" varchar,
 	"expira" Date,
-	"completado" boolean
+	"completado" boolean,
+    "id_usuario" BIGINT REFERENCES "usuario" ("id")
 );
 CREATE TABLE "usuario" (
 	"id" BIGSERIAL PRIMARY KEY,
