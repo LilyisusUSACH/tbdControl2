@@ -26,10 +26,10 @@ public class TareaService {
     }
 
     public TareaEntity createTarea(TareaEntity tarea, String actualUser) {
-        return tareaRepository.create(tarea,actualUser);
+        return tareaRepository.create(tarea);
     }
 
-    public TareaEntity updateTarea(TareaEntity tarea, String actualUser) { return tareaRepository.update(tarea,actualUser);}
+    public TareaEntity updateTarea(TareaEntity tarea, String actualUser) { return tareaRepository.update(tarea);}
 
 
     public Boolean deleteTarea(Long id,String actualUser){
@@ -37,6 +37,6 @@ public class TareaService {
     }
 
     public List<TareaEntity> getCoincidenceTasks(String search, String actualUser){
-        return tareaRepository.getCoincidences(search,actualUser);
+        return tareaRepository.getCoincidences(search);
     }
 }

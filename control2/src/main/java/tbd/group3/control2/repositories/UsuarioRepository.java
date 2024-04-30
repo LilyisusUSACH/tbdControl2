@@ -26,10 +26,10 @@ public interface UsuarioRepository{
 
     Boolean delete(Long id, String actualUser);
 
-    List<TareaEntity> getMyCompletedTareas(Long id_usuario, String actualUser);
+    List<TareaEntity> getMyCompletedTareas(Long id_usuario);
 
-    List<TareaEntity> getMyUncompletedTareas(Long id_usuario, String actualUser);
-    List<TareaEntity> getMyTareas(Long id_usuario, String actualUser);
+    List<TareaEntity> getMyUncompletedTareas(Long id_usuario);
+    List<TareaEntity> getMyTareas(Long id_usuario);
 
 
 }

@@ -18,7 +18,6 @@ public class UsuarioRepositoryImpl implements UsuarioRepository{
     @Autowired
     private Sql2o sql2o;
 
-
     @Override
     public List<UsuarioEntity> findAll() {
         final String sqlQuery = "SELECT * FROM usuario";
