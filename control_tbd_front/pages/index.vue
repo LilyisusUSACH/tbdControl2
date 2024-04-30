@@ -1,17 +1,19 @@
 import { type } from '../.nuxt/types/imports';
+import { ref, useRouter } from 'vue-router';
 <script setup>
 
 const username = ref("");
 const password = ref("");
+const router = useRouter();
 
+router.push('/login');
 
 const onClick = async () => {
     try {
         await $fetch('http://localhost:8080/auth/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Asegúrate de establecer el tipo de contenido correctamente
-                // Otros encabezados si es necesario
+                'Content-Type': 'application/json',
                 'Origin': 'http://localhost:3000',
                 'Host':'http://localhost:3000'
             },
