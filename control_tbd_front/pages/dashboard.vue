@@ -1,14 +1,15 @@
 import { type } from '../.nuxt/types/imports';
+import { ref, useRouter } from 'vue-router';
 
 <script>
 export default {
   data() {
     return {
-      tasks: [], // Aquí irían las tareas
+      tasks: [], // Almacenar las tareas obtenidas del servidor
       search: '',
       filter: 'Todas',
-      selectedTask: null, // Para editar tareas
-      taskDialog: false, // Controlar la visibilidad del diálogo de tarea
+      selectedTask: null, // editar tareas
+      taskDialog: false, // Controlar la para ver tareass
     };
   },
   computed: {
@@ -25,6 +26,26 @@ export default {
     }
   },
   methods: {
+    async beforeMount() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        this.$router.push('/login');
+      } else {
+        try {
+          // GET al servidor con el token en el encabezado
+          const response = await this.$fetch('http://localhost:8080/api/tasks', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          this.tasks = await response.json();
+        } catch (error) {
+          console.error('Error al obtener las tareas:', error);
+          // TODO mensaje al user
+          this.$router.push('/login'); //
+        }
+      }
+    },
     openTaskDialog(task) {
       this.selectedTask = task ? Object.assign({}, task) : { title: '', description: '', dueDate: new Date().toISOString().substr(0, 10), completed: false };
       this.taskDialog = true;
